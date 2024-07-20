@@ -41,4 +41,20 @@ public class AluguelRepository {
         return this.manager.createQuery("from Aluguel a where a.dataPagamento > a.dataVencimento", Aluguel.class)
                 .getResultList();
     }
+
+    public Double calcularValorComMulta(Aluguel aluguel, java.util.Date dataPagamento) {
+        long diffInMillies = Math.abs(dataPagamento.getTime() - aluguel.getDataVencimento().getTime());
+        long diff = diffInMillies / (1000 * 60 * 60 * 24);
+
+        if (diff <= 0) {
+            return aluguel.getValorPago();
+        }
+
+        double multa = aluguel.getValorPago() * 0.0033 * diff;
+        if (multa > aluguel.getValorPago() * 0.20) {
+            multa = aluguel.getValorPago() * 0.20;
+        }
+
+        return aluguel.getValorPago() + multa;
+    }
 }

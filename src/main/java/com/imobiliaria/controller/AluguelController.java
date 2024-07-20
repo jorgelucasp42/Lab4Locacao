@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Path("/alugueis")
@@ -73,5 +74,24 @@ public class AluguelController {
             manager.getTransaction().commit();
         }
         return Response.noContent().build();
+    }
+
+    @POST
+    @Path("/{id}/pagamento")
+    public Response registrarPagamento(@PathParam("id") Integer id, @QueryParam("dataPagamento") Date dataPagamento) {
+        Aluguel aluguel = aluguelRepository.buscaPor(id);
+        if (aluguel == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        double valorComMulta = aluguelRepository.calcularValorComMulta(aluguel, dataPagamento);
+
+        manager.getTransaction().begin();
+        aluguel.setDataPagamento(dataPagamento);
+        aluguel.setValorPago(valorComMulta);
+        aluguelRepository.salvaOuAtualiza(aluguel);
+        manager.getTransaction().commit();
+
+        return Response.ok(aluguel).build();
     }
 }
