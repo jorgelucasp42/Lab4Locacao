@@ -20,6 +20,9 @@ public class ClienteController {
 
     @POST
     public Response createCliente(Cliente cliente) {
+        if (clienteRepository.existePorCpf(cliente.getCpf())) {
+            return Response.status(Response.Status.CONFLICT).entity("CPF já cadastrado").build();
+        }
         manager.getTransaction().begin();
         Cliente savedCliente = clienteRepository.salvaOuAtualiza(cliente);
         manager.getTransaction().commit();
@@ -62,4 +65,3 @@ public class ClienteController {
         return Response.noContent().build();
     }
 }
-

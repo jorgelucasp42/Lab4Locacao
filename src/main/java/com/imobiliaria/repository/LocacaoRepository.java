@@ -36,4 +36,12 @@ public class LocacaoRepository {
     public void remove(Locacao locacao) {
         daoGenerico.remove(locacao);
     }
+
+    public boolean imovelEstaAlugado(Integer idImovel) {
+        Long count = this.manager.createQuery("select count(l) from Locacao l where l.imovel.id = :idImovel and l.ativo = true", Long.class)
+                .setParameter("idImovel", idImovel)
+                .getSingleResult();
+        return count > 0;
+    }
 }
+

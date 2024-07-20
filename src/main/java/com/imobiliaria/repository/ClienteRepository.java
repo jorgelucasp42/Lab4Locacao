@@ -32,4 +32,12 @@ public class ClienteRepository {
     public void remove(Cliente cliente) {
         daoGenerico.remove(cliente);
     }
+
+    public boolean existePorCpf(String cpf) {
+        Long count = this.manager.createQuery("select count(c) from Cliente c where c.cpf = :cpf", Long.class)
+                .setParameter("cpf", cpf)
+                .getSingleResult();
+        return count > 0;
+    }
 }
+

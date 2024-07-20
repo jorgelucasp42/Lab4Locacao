@@ -36,4 +36,11 @@ public class AluguelRepository {
     public void remove(Aluguel aluguel) {
         daoGenerico.remove(aluguel);
     }
+
+    public List<Aluguel> buscaAtrasados() {
+        return this.manager.createQuery("from Aluguel where dataPagamento > dataVencimento", Aluguel.class)
+                .getResultList();
+    }
+}
+
 }
