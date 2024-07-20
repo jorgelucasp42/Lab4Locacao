@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/alugueis")
+@Path("/aluguels")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AluguelController {
@@ -53,6 +53,13 @@ public class AluguelController {
     @Path("/inquilino")
     public Response getAluguelsByInquilinoNome(@QueryParam("nome") String nome) {
         List<Aluguel> aluguels = aluguelRepository.buscaPorInquilinoNome(nome);
+        return Response.ok(aluguels).build();
+    }
+
+    @GET
+    @Path("/atrasados")
+    public Response getAtrasados() {
+        List<Aluguel> aluguels = aluguelRepository.buscaAtrasados();
         return Response.ok(aluguels).build();
     }
 

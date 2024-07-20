@@ -2,6 +2,7 @@ package com.imobiliaria.controller;
 
 import com.imobiliaria.model.Locacao;
 import com.imobiliaria.repository.LocacaoRepository;
+import com.imobiliaria.repository.ImovelRepository;
 import com.imobiliaria.util.JPAUtil;
 
 import javax.persistence.EntityManager;
@@ -17,9 +18,13 @@ public class LocacaoController {
 
     private final EntityManager manager = JPAUtil.getEntityManager();
     private final LocacaoRepository locacaoRepository = new LocacaoRepository(manager);
+    private final ImovelRepository imovelRepository = new ImovelRepository(manager);
 
     @POST
     public Response createLocacao(Locacao locacao) {
+        if (!imovelRepository.estaDisponivelParaLocacao(locacao.getImovel().getId())) {
+            return Response.status(Response.Status.CONFLICT).entity("Imóvel não está disponível para locação").build();
+        }
         manager.getTransaction().begin();
         Locacao savedLocacao = locacaoRepository.salvaOuAtualiza(locacao);
         manager.getTransaction().commit();

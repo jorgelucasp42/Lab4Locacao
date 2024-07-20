@@ -30,3 +30,4 @@ public class Aluguel {
     @Column(columnDefinition = "TEXT")
     private String obs;
 }
+

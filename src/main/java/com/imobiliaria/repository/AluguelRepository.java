@@ -20,7 +20,7 @@ public class AluguelRepository {
     }
 
     public List<Aluguel> buscaPorInquilinoNome(String nome) {
-        return this.manager.createQuery("from Aluguel where locacao.inquilino.nome = :nome", Aluguel.class)
+        return this.manager.createQuery("from Aluguel a where a.locacao.inquilino.nome = :nome", Aluguel.class)
                 .setParameter("nome", nome)
                 .getResultList();
     }
@@ -38,9 +38,7 @@ public class AluguelRepository {
     }
 
     public List<Aluguel> buscaAtrasados() {
-        return this.manager.createQuery("from Aluguel where dataPagamento > dataVencimento", Aluguel.class)
+        return this.manager.createQuery("from Aluguel a where a.dataPagamento > a.dataVencimento", Aluguel.class)
                 .getResultList();
     }
-}
-
 }
