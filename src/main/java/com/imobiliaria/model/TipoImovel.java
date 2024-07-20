@@ -21,3 +21,4 @@ public class TipoImovel {
     @OneToMany(mappedBy = "tipoImovel")
     private List<Imovel> imoveis;
 }
+
