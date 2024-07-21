@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "CLIENTES")
+@Table(name = "CLIENTES", uniqueConstraints = {@UniqueConstraint(columnNames = "cpf")})
 public class Cliente implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
