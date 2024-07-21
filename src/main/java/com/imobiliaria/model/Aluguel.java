@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "ALUGUEIS")
-public class Aluguel {
+public class Aluguel implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,13 +18,21 @@ public class Aluguel {
     private Locacao locacao;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "data_vencimento")
     private Date dataVencimento;
 
+    @Column(name = "valor_pago")
     private Double valorPago;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "data_pagamento")
     private Date dataPagamento;
 
-    @Column(length = 1000)
+    @Column(name = "obs", length = 1000)
     private String obs;
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }

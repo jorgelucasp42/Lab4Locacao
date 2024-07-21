@@ -1,17 +1,36 @@
 package com.imobiliaria;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class ImobiliariaApplication {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import com.imobiliaria.model.Imovel;
+import com.imobiliaria.repository.ImovelRepository;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public class Main {
+    public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("lab_jpa");
+        EntityManager em = emf.createEntityManager();
+
+        ImovelRepository imovelRepository = new ImovelRepository(em);
+
+        // Exemplo de uso
+        Imovel imovel = new Imovel();
+        imovel.setLogradouro("Rua A");
+        imovel.setBairro("Centro");
+        imovel.setCep("12345-678");
+        imovel.setMetragem(100);
+        imovel.setDormitorios((byte) 2);
+        imovel.setBanheiros((byte) 1);
+        imovel.setSuites((byte) 1);
+        imovel.setVagasGaragem((byte) 1);
+        imovel.setValorAluguelSugerido(1500.00);
+
+        imovelRepository.salvaOuAtualiza(imovel);
+
+        imovelRepository.findAll().forEach(System.out::println);
+
+        em.close();
+        emf.close();
     }
 }

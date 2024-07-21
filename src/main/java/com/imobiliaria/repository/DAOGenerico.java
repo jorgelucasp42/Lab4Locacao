@@ -1,41 +1,32 @@
 package com.imobiliaria.repository;
 
+import com.imobiliaria.model.EntidadeBase;
+
 import javax.persistence.EntityManager;
-import java.util.List;
+import java.util.Objects;
 
-public class DAOGenerico<T> {
-    private final Class<T> classe;
-    protected EntityManager em;
+public class DAOGenerico<T extends EntidadeBase> {
+    private final EntityManager manager;
 
-    public DAOGenerico(Class<T> classe, EntityManager em) {
-        this.classe = classe;
-        this.em = em;
+    public DAOGenerico(EntityManager manager) {
+        this.manager = manager;
     }
 
-    public void save(T entity) {
-        em.getTransaction().begin();
-        if (em.contains(entity) || (entity.getId() != null && em.find(classe, entity.getId()) != null)) {
-            em.merge(entity);
+    public T buscaPorId(Class<T> clazz, Integer id) {
+        return manager.find(clazz, id);
+    }
+
+    public T salvaOuAtualiza(T t) {
+        if (Objects.isNull(t.getId())) {
+            this.manager.persist(t);
         } else {
-            em.persist(entity);
+            t = this.manager.merge(t);
         }
-        em.getTransaction().commit();
+        return t;
     }
 
-    public T findById(Integer id) {
-        return em.find(classe, id);
-    }
-
-    public List<T> findAll() {
-        return em.createQuery("FROM " + classe.getName(), classe).getResultList();
-    }
-
-    public void deleteById(Integer id) {
-        em.getTransaction().begin();
-        T entity = em.find(classe, id);
-        if (entity != null) {
-            em.remove(entity);
-        }
-        em.getTransaction().commit();
+    public void remove(T t) {
+        manager.remove(t);
+        manager.flush();
     }
 }

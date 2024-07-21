@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "CLIENTES")
-public class Cliente {
+public class Cliente implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,4 +27,9 @@ public class Cliente {
 
     @Temporal(TemporalType.DATE)
     private Date dtNascimento;
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }

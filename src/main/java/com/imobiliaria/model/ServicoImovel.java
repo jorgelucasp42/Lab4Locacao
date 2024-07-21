@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "SERVICOS_IMOVEL")
-public class ServicoImovel {
+public class ServicoImovel implements EntidadeBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

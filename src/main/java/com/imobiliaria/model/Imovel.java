@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "IMOVEIS")
-public class Imovel {
+public class Imovel implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -33,4 +33,9 @@ public class Imovel {
 
     @Column(length = 1000)
     private String obs;
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }
