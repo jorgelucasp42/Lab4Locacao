@@ -7,35 +7,25 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class ClienteService {
-
     private final ClienteRepository clienteRepository;
 
-    public ClienteService(EntityManager manager) {
-        this.clienteRepository = new ClienteRepository(manager);
+    public ClienteService(EntityManager em) {
+        this.clienteRepository = new ClienteRepository(em);
     }
 
-    public Cliente salvarCliente(Cliente cliente) {
-        // Verificar se o CPF do cliente é único
-        List<Cliente> clientesExistentes = clienteRepository.buscaPorCpf(cliente.getCpf());
-        if (!clientesExistentes.isEmpty()) {
-            throw new IllegalArgumentException("CPF já cadastrado");
-        }
+    public Cliente buscaPorId(Integer id) {
+        return clienteRepository.buscaPorId(Cliente.class, id);
+    }
+
+    public Cliente salvaOuAtualiza(Cliente cliente) {
         return clienteRepository.salvaOuAtualiza(cliente);
     }
 
-    public Cliente atualizarCliente(Cliente cliente) {
-        return clienteRepository.salvaOuAtualiza(cliente);
-    }
-
-    public List<Cliente> listarClientes() {
-        return clienteRepository.buscaTodos();
-    }
-
-    public Cliente buscarClientePorId(Integer id) {
-        return clienteRepository.buscaPorId(id);
-    }
-
-    public void removerCliente(Cliente cliente) {
+    public void remove(Cliente cliente) {
         clienteRepository.remove(cliente);
+    }
+
+    public List<Cliente> findAll() {
+        return clienteRepository.findAll();
     }
 }

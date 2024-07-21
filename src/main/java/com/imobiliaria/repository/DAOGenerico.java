@@ -3,6 +3,7 @@ package com.imobiliaria.repository;
 import com.imobiliaria.model.EntidadeBase;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Objects;
 
 public class DAOGenerico<T extends EntidadeBase> {
@@ -28,5 +29,9 @@ public class DAOGenerico<T extends EntidadeBase> {
     public void remove(T t) {
         manager.remove(t);
         manager.flush();
+    }
+
+    public List<T> findAll(Class<T> clazz) {
+        return manager.createQuery("FROM " + clazz.getName(), clazz).getResultList();
     }
 }

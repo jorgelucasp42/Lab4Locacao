@@ -7,25 +7,25 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class ImovelService {
-    private ImovelRepository imovelRepository;
+    private final ImovelRepository imovelRepository;
 
     public ImovelService(EntityManager em) {
         this.imovelRepository = new ImovelRepository(em);
     }
 
+    public Imovel buscaPorId(Integer id) {
+        return imovelRepository.buscaPorId(Imovel.class, id);
+    }
+
+    public Imovel salvaOuAtualiza(Imovel imovel) {
+        return imovelRepository.salvaOuAtualiza(imovel);
+    }
+
+    public void remove(Imovel imovel) {
+        imovelRepository.remove(imovel);
+    }
+
     public List<Imovel> findAll() {
         return imovelRepository.findAll();
-    }
-
-    public Imovel findById(Integer id) {
-        return imovelRepository.findById(id);
-    }
-
-    public void save(Imovel imovel) {
-        imovelRepository.save(imovel);
-    }
-
-    public void deleteById(Integer id) {
-        imovelRepository.deleteById(id);
     }
 }
