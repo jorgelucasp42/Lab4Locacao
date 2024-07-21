@@ -3,24 +3,19 @@ package com.imobiliaria.repository;
 import com.imobiliaria.model.ServicoImovel;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 public class ServicoImovelRepository {
 
     private final EntityManager manager;
-    private DAOGenerico<ServicoImovel> daoGenerico;
+    private final DAOGenerico<ServicoImovel> daoGenerico;
 
     public ServicoImovelRepository(EntityManager manager) {
         this.manager = manager;
-        daoGenerico = new DAOGenerico<>(manager);
+        this.daoGenerico = new DAOGenerico<>(manager, ServicoImovel.class);
     }
 
-    public ServicoImovel buscaPor(Integer id) {
-        return daoGenerico.buscaPorId(ServicoImovel.class, id);
-    }
-
-    public List<ServicoImovel> buscaTodos() {
-        return this.manager.createQuery("from ServicoImovel", ServicoImovel.class).getResultList();
+    public ServicoImovel buscaPorId(Integer id) {
+        return daoGenerico.buscaPorId(id);
     }
 
     public ServicoImovel salvaOuAtualiza(ServicoImovel servicoImovel) {
@@ -29,6 +24,10 @@ public class ServicoImovelRepository {
 
     public void remove(ServicoImovel servicoImovel) {
         daoGenerico.remove(servicoImovel);
+    }
+
+    public List<ServicoImovel> buscaTodos() {
+        return daoGenerico.buscaTodos();
     }
 }
 

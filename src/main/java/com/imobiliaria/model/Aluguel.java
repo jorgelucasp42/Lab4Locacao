@@ -1,33 +1,30 @@
 package com.imobiliaria.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
+@Table(name = "ALUGUEIS")
 public class Aluguel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_locacao", nullable = false)
+    @JoinColumn(name = "id_locacao")
     private Locacao locacao;
 
-    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date dataVencimento;
 
-    @Column(precision = 10, scale = 2, nullable = false)
     private Double valorPago;
 
+    @Temporal(TemporalType.DATE)
     private Date dataPagamento;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 1000)
     private String obs;
 }
-

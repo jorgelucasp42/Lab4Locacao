@@ -1,24 +1,16 @@
 package com.imobiliaria.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.List;
-
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
+@Table(name = "TIPO_IMOVEL")
 public class TipoImovel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 256, nullable = false)
+    @Column(length = 256)
     private String descricao;
-
-    @OneToMany(mappedBy = "tipoImovel")
-    private List<Imovel> imoveis;
 }
-

@@ -1,34 +1,31 @@
 package com.imobiliaria.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
+@Table(name = "SERVICOS_IMOVEL")
 public class ServicoImovel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_profissional", nullable = false)
+    @JoinColumn(name = "id_profissional")
     private Profissional profissional;
 
     @ManyToOne
-    @JoinColumn(name = "id_imovel", nullable = false)
+    @JoinColumn(name = "id_imovel")
     private Imovel imovel;
 
-    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date dataServico;
 
-    @Column(precision = 10, scale = 2, nullable = false)
     private Double valorTotal;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 1000)
     private String obs;
 }

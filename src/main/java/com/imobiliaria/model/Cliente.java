@@ -1,36 +1,30 @@
 package com.imobiliaria.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
+@Table(name = "CLIENTES")
 public class Cliente {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 45)
     private String nome;
 
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(length = 12, unique = true)
     private String cpf;
 
-    @Column(length = 12, nullable = false)
+    @Column(length = 12)
     private String telefone;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String email;
 
-    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date dtNascimento;
-
-    @OneToMany(mappedBy = "inquilino")
-    private List<Locacao> locacoes;
 }

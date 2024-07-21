@@ -1,26 +1,41 @@
 package com.imobiliaria.repository;
 
 import javax.persistence.EntityManager;
-import java.io.Serializable;
+import java.util.List;
 
 public class DAOGenerico<T> {
+    private final Class<T> classe;
+    protected EntityManager em;
 
-    private final EntityManager manager;
-
-    public DAOGenerico(EntityManager manager) {
-        this.manager = manager;
+    public DAOGenerico(Class<T> classe, EntityManager em) {
+        this.classe = classe;
+        this.em = em;
     }
 
-    public T buscaPorId(Class<T> classe, Serializable id) {
-        return manager.find(classe, id);
+    public void save(T entity) {
+        em.getTransaction().begin();
+        if (em.contains(entity) || (entity.getId() != null && em.find(classe, entity.getId()) != null)) {
+            em.merge(entity);
+        } else {
+            em.persist(entity);
+        }
+        em.getTransaction().commit();
     }
 
-    public T salvaOuAtualiza(T t) {
-        return manager.merge(t);
+    public T findById(Integer id) {
+        return em.find(classe, id);
     }
 
-    public void remove(T t) {
-        T entity = manager.merge(t);
-        manager.remove(entity);
+    public List<T> findAll() {
+        return em.createQuery("FROM " + classe.getName(), classe).getResultList();
+    }
+
+    public void deleteById(Integer id) {
+        em.getTransaction().begin();
+        T entity = em.find(classe, id);
+        if (entity != null) {
+            em.remove(entity);
+        }
+        em.getTransaction().commit();
     }
 }
