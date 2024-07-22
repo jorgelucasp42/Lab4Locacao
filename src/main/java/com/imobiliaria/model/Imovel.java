@@ -1,7 +1,10 @@
 package com.imobiliaria.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -12,27 +15,43 @@ public class Imovel implements EntidadeBase {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo_imovel")
+    @JoinColumn(name = "id_tipo_imovel", nullable = false)
     private TipoImovel tipoImovel;
 
-    @Column(length = 200)
+    @ManyToOne
+    @JoinColumn(name = "id_proprietario", nullable = false)
+    private Cliente proprietario;
+
+    @Column(length = 200, nullable = false)
     private String logradouro;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String bairro;
 
-    @Column(length = 10)
+    @Column(length = 10, nullable = false)
     private String cep;
 
     private Integer metragem;
+
     private Byte dormitorios;
+
     private Byte banheiros;
+
     private Byte suites;
+
     private Byte vagasGaragem;
+
+    @Column(name = "valor_aluguel_sugerido", precision = 10, scale = 2)
     private Double valorAluguelSugerido;
 
     @Column(length = 1000)
     private String obs;
+
+    @OneToMany(mappedBy = "imovel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Locacao> locacoes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "imovel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServicoImovel> servicosImovel = new ArrayList<>();
 
     @Override
     public Integer getId() {

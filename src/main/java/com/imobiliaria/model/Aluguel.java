@@ -1,24 +1,23 @@
 package com.imobiliaria.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
 
-@Data
 @Entity
 @Table(name = "ALUGUEIS")
-public class Aluguel implements EntidadeBase {
+public @Data class Aluguel implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_locacao")
+    @JoinColumn(name = "id_locacao", nullable = false)
     private Locacao locacao;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "data_vencimento")
+    @Column(name = "data_vencimento", nullable = false)
     private Date dataVencimento;
 
     @Column(name = "valor_pago")

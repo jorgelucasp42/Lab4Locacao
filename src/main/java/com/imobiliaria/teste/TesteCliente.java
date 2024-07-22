@@ -1,91 +1,100 @@
 package com.imobiliaria.teste;
 
 import com.imobiliaria.model.Cliente;
-import com.imobiliaria.service.ClienteService;
+import com.imobiliaria.repository.ClienteRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
+
 
 public class TesteCliente {
 
+    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
+    private static EntityManager manager = factory.createEntityManager();
+    private static ClienteRepository clienteRepository = new ClienteRepository(manager);
+
     public static void main(String[] args) {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
-        EntityManager manager = factory.createEntityManager();
+        try {
+//            testCreate();
+            testRead();
+//            testUpdate();
+//            testDelete();
+        } finally {
+            manager.close();
+            factory.close();
+        }
 
-        ClienteService clienteService = new ClienteService(manager);
+    }
 
+    private static void testCreate() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
 
-        // Cenário: criar e salvar um cliente
         Cliente cliente = new Cliente();
         cliente.setNome("João de Sousa");
-        cliente.setCpf("123.123.123-12");
+        cliente.setCpf("12312312312");
         cliente.setTelefone("999999999");
         cliente.setEmail("joao@example.com");
 
-        // Ação: salvar o cliente
-        clienteService.salvaOuAtualiza(cliente);
-
+        clienteRepository.salvaOuAtualiza(cliente);
         transacao.commit();
 
-        // Verificação: verificar se o cliente foi salvo
-        Cliente clienteSalvo = clienteService.buscaPorId(cliente.getId());
+        Cliente clienteSalvo = clienteRepository.buscaPorId(Cliente.class, cliente.getId());
         if (clienteSalvo != null) {
-            System.out.println("Cliente salvo com sucesso: " + clienteSalvo.getNome());
+            System.out.println("Cliente criado com sucesso: " + clienteSalvo.getNome());
         } else {
-            System.out.println("Erro ao salvar o cliente.");
+            System.out.println("Erro ao criar o cliente.");
         }
+    }
 
-        // Cenário: tentar salvar outro cliente com o mesmo CPF
-        Cliente clienteDuplicado = new Cliente();
-        clienteDuplicado.setNome("Maria de Sousa");
-        clienteDuplicado.setCpf("123.123.123-12");
-        clienteDuplicado.setTelefone("888888888");
-        clienteDuplicado.setEmail("maria@example.com");
+    private static void testRead() {
+        Cliente cliente = new Cliente();
+        cliente.setNome("Leitura Teste");
+        cliente.setCpf("98765432100");
+        cliente.setTelefone("999999999");
+        cliente.setEmail("leitura@example.com");
 
+        EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
-        try {
-            clienteService.salvaOuAtualiza(clienteDuplicado);
-            transacao.commit();
-            System.out.println("Cliente duplicado salvo, problema com a verificação de CPF único.");
-        } catch (Exception e) {
-            transacao.rollback();
-            System.out.println("Erro ao salvar cliente duplicado (CPF deve ser único): " + e.getMessage());
-        }
-
-        // Cenário: listar todos os clientes
-        List<Cliente> clientes = clienteService.findAll();
-        System.out.println("Clientes cadastrados:");
-        for (Cliente c : clientes) {
-            System.out.println(c.getNome() + " - CPF: " + c.getCpf());
-        }
-
-        // Cenário: atualizar um cliente
-        transacao.begin();
-        clienteSalvo.setNome("João de Sousa Atualizado");
-        clienteService.salvaOuAtualiza(clienteSalvo);
+        clienteRepository.salvaOuAtualiza(cliente);
         transacao.commit();
 
-        Cliente clienteAtualizado = clienteService.buscaPorId(clienteSalvo.getId());
+        Cliente clienteLido = clienteRepository.buscaPorId(Cliente.class, cliente.getId());
+        if (clienteLido != null) {
+            System.out.println("Cliente lido: " + clienteLido.getNome() + " - CPF: " + clienteLido.getCpf());
+        } else {
+            System.out.println("Erro ao ler o cliente.");
+        }
+    }
+
+    private static void testUpdate() {
+        EntityTransaction transacao = manager.getTransaction();
+        transacao.begin();
+
+        Cliente clienteExistente = clienteRepository.findAll(Cliente.class).get(0);
+        clienteExistente.setNome("João Atualizado");
+        clienteRepository.salvaOuAtualiza(clienteExistente);
+        transacao.commit();
+
+        Cliente clienteAtualizado = clienteRepository.buscaPorId(Cliente.class, clienteExistente.getId());
         System.out.println("Cliente atualizado: " + clienteAtualizado.getNome());
+    }
 
-        // Cenário: remover um cliente
+    private static void testDelete() {
+        EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
-        clienteService.remove(clienteAtualizado);
+
+        Cliente clienteExistente = clienteRepository.findAll(Cliente.class).get(0);
+        clienteRepository.remove(clienteExistente);
         transacao.commit();
 
-        Cliente clienteRemovido = clienteService.buscaPorId(clienteAtualizado.getId());
+        Cliente clienteRemovido = clienteRepository.buscaPorId(Cliente.class, clienteExistente.getId());
         if (clienteRemovido == null) {
             System.out.println("Cliente removido com sucesso.");
         } else {
             System.out.println("Erro ao remover o cliente.");
         }
-
-        manager.close();
-        factory.close();
     }
 }

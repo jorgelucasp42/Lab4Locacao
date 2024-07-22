@@ -15,7 +15,7 @@ public class TesteConexao {
             manager = factory.createEntityManager();
             System.out.println("Conexão com o banco de dados estabelecida com sucesso!");
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getMessage();
         } finally {
             if (manager != null) {
                 manager.close();

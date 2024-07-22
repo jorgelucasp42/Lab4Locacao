@@ -5,9 +5,10 @@
              version="3.0">
     <persistence-unit name="lab_jpa" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
         <properties>
             <!-- Configurações do JDBC -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/lab_jpa?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC&amp;createDatabaseIfNotExist=true"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/lab_jpa?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC&amp;createDatabaseIfNotExist=true"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
             <property name="javax.persistence.jdbc.password" value="rafaelsimas"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
@@ -17,6 +18,7 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+
         </properties>
     </persistence-unit>
 </persistence>
