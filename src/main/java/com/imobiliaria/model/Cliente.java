@@ -1,25 +1,26 @@
 package com.imobiliaria.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Data
+
 @Entity
-@Table(name = "CLIENTES")
-public class Cliente implements EntidadeBase {
+public @Data class Cliente implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String nome;
 
     @Column(length = 12, unique = true)
     private String cpf;
 
-    @Column(length = 12)
+    @Column(length = 12, nullable = false)
     private String telefone;
 
     @Column(length = 100)
@@ -27,6 +28,12 @@ public class Cliente implements EntidadeBase {
 
     @Temporal(TemporalType.DATE)
     private Date dtNascimento;
+
+    @OneToMany(mappedBy = "inquilino", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Locacao> locacoes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "proprietario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Imovel> imoveis = new ArrayList<>();
 
     @Override
     public Integer getId() {

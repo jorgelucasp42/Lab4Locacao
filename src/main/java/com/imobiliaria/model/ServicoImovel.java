@@ -1,6 +1,6 @@
 package com.imobiliaria.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,11 +14,11 @@ public class ServicoImovel implements EntidadeBase{
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_profissional")
+    @JoinColumn(name = "id_profissional", nullable = false)
     private Profissional profissional;
 
     @ManyToOne
-    @JoinColumn(name = "id_imovel")
+    @JoinColumn(name = "id_imovel", nullable = false)
     private Imovel imovel;
 
     @Temporal(TemporalType.DATE)

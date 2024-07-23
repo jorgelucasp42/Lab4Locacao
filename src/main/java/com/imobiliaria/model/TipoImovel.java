@@ -1,7 +1,10 @@
 package com.imobiliaria.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -13,6 +16,9 @@ public class TipoImovel implements EntidadeBase {
 
     @Column(length = 256)
     private String descricao;
+
+    @OneToMany(mappedBy = "tipoImovel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Imovel> imoveis = new ArrayList<>();
 
     @Override
     public Integer getId() {

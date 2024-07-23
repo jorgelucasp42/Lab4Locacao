@@ -1,4 +1,4 @@
-package com.imobiliaria.test;
+package com.imobiliaria.teste;
 
 import lombok.Data;
 

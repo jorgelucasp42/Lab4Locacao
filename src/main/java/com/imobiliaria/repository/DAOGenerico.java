@@ -3,10 +3,12 @@ package com.imobiliaria.repository;
 import com.imobiliaria.model.EntidadeBase;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Objects;
 
-public class DAOGenerico<T extends EntidadeBase> {
+class DAOGenerico<T extends EntidadeBase> {
+
     private final EntityManager manager;
 
     public DAOGenerico(EntityManager manager) {
@@ -18,11 +20,10 @@ public class DAOGenerico<T extends EntidadeBase> {
     }
 
     public T salvaOuAtualiza(T t) {
-        if (Objects.isNull(t.getId())) {
+        if (Objects.isNull(t.getId()))
             this.manager.persist(t);
-        } else {
+        else
             t = this.manager.merge(t);
-        }
         return t;
     }
 
@@ -32,6 +33,12 @@ public class DAOGenerico<T extends EntidadeBase> {
     }
 
     public List<T> findAll(Class<T> clazz) {
-        return manager.createQuery("FROM " + clazz.getName(), clazz).getResultList();
+        String jpql = "SELECT t FROM " + clazz.getSimpleName() + " t";
+        TypedQuery<T> query = manager.createQuery(jpql, clazz);
+        return query.getResultList();
+    }
+
+    protected EntityManager getManager() {
+        return manager;
     }
 }
