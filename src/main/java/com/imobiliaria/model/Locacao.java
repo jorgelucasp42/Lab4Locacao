@@ -48,4 +48,21 @@ public class Locacao implements EntidadeBase{
 
     @OneToMany(mappedBy = "locacao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Aluguel> alugueis = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Locacao{" +
+                "id=" + id +
+                ", imovel=" + (imovel != null ? imovel.getLogradouro() : null) +
+                ", inquilino=" + (inquilino != null ? inquilino.getNome() : null) +
+                ", valorAluguel=" + valorAluguel +
+                ", percentualMulta=" + percentualMulta +
+                ", diaVencimento=" + diaVencimento +
+                ", dataInicio=" + dataInicio +
+                ", dataFim=" + dataFim +
+                ", ativo=" + ativo +
+                ", obs='" + obs + '\'' +
+                ", alugueis=" + alugueis.size() +
+                '}';
+    }
 }

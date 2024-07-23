@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Data
 @Entity
@@ -56,5 +57,15 @@ public class Imovel implements EntidadeBase {
     @Override
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Imovel.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("logradouro='" + logradouro + "'")
+                .add("valorAluguelSugerido=" + valorAluguelSugerido)
+                // Adicione os outros atributos aqui
+                .toString();
     }
 }

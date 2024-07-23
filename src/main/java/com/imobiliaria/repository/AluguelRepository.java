@@ -45,7 +45,7 @@ public class AluguelRepository extends DAOGenerico<Aluguel> {
      * Recupera todos os alugués de um pagos com atraso.
      * @return Lista de imóveis disponíveis com valor de aluguel igual ou inferior ao informado.
      */
-    public List<Aluguel> findAluguéisPagosComAtraso() {
+    public List<Aluguel> findAlugueisPagosComAtraso() {
         String jpql = "SELECT a FROM Aluguel a WHERE a.dataPagamento IS NOT NULL " +
                 "AND a.dataPagamento > a.dataVencimento";
 
