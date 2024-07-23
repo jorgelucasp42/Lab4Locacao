@@ -9,8 +9,8 @@
         <properties>
             <!-- Configurações do JDBC -->
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/lab_jpa?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC&amp;createDatabaseIfNotExist=true"/>
-            <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="rafaelsimas"/>
+            <property name="javax.persistence.jdbc.user" value="admin"/>
+            <property name="javax.persistence.jdbc.password" value="admin"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 
             <!-- Propriedades do Hibernate -->
