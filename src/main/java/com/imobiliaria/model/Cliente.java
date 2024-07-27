@@ -1,15 +1,19 @@
 package com.imobiliaria.model;
 
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 @Entity
-public @Data class Cliente implements EntidadeBase {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Cliente implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -17,7 +21,7 @@ public @Data class Cliente implements EntidadeBase {
     @Column(length = 45, nullable = false)
     private String nome;
 
-    @Column(length = 12, unique = true)
+    @Column(length = 12, unique = true, nullable = false)
     private String cpf;
 
     @Column(length = 12, nullable = false)

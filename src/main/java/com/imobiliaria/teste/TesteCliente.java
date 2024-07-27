@@ -7,6 +7,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class TesteCliente {
 
@@ -16,63 +20,48 @@ public class TesteCliente {
 
     public static void main(String[] args) {
         try {
-            System.out.println("========== Teste de Criação de Cliente ==========");
-            testarCriacaoCliente();
-            System.out.println("=================================================");
+            System.out.println("========== Teste de Criação de Clientes ==========");
+            testarCriacaoClientes();
 
             System.out.println("========== Teste de Leitura de Cliente ==========");
             testarLeituraCliente();
-            System.out.println("=================================================");
 
             System.out.println("========== Teste de Atualização de Cliente ==========");
             testarAtualizacaoCliente();
-            System.out.println("=================================================");
 
             System.out.println("========== Teste de Remoção de Cliente ==========");
             testarRemocaoCliente();
-            System.out.println("=================================================");
+
+            System.out.println("========== Teste de Unicidade de CPF ==========");
+            testarUnicidadeCPF();
         } finally {
             manager.close();
             factory.close();
         }
     }
 
-    private static void testarCriacaoCliente() {
+    private static void testarCriacaoClientes() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
 
-        Cliente cliente = new Cliente();
-        cliente.setNome("João de Sousa");
-        cliente.setCpf("12312312312");
-        cliente.setTelefone("999999999");
-        cliente.setEmail("joao@example.com");
+        Cliente cliente1 = new Cliente(null, "João de Sousa", "12312312312", "999999999", "joao@example.com", parseDate("1990-01-01"), new ArrayList<>(), new ArrayList<>());
+        Cliente cliente2 = new Cliente(null, "Maria de Souza", "45645645645", "888888888", "maria@example.com", parseDate("1985-05-15"), new ArrayList<>(), new ArrayList<>());
+        Cliente cliente3 = new Cliente(null, "Carlos de Almeida", "78978978978", "777777777", "carlos@example.com", parseDate("1992-03-03"), new ArrayList<>(), new ArrayList<>());
 
-        cliente = clienteRepository.salvaOuAtualiza(cliente);
+        clienteRepository.salvaOuAtualiza(cliente1);
+        clienteRepository.salvaOuAtualiza(cliente2);
+        clienteRepository.salvaOuAtualiza(cliente3);
+
         transacao.commit();
 
-        Cliente clienteSalvo = clienteRepository.buscaPorId(Cliente.class, cliente.getId());
-        if (clienteSalvo != null) {
-            System.out.println("Cliente criado com sucesso: ");
-            imprimirCliente(clienteSalvo);
-        } else {
-            System.out.println("Erro ao criar o cliente.");
-        }
+        System.out.println("Clientes criados com sucesso.");
+        imprimirCliente(cliente1);
+        imprimirCliente(cliente2);
+        imprimirCliente(cliente3);
     }
 
     private static void testarLeituraCliente() {
-        EntityTransaction transacao = manager.getTransaction();
-        transacao.begin();
-
-        Cliente cliente = new Cliente();
-        cliente.setNome("Leitura Teste");
-        cliente.setCpf("98765432100");
-        cliente.setTelefone("999999999");
-        cliente.setEmail("leitura@example.com");
-
-        cliente = clienteRepository.salvaOuAtualiza(cliente);
-        transacao.commit();
-
-        Cliente clienteLido = clienteRepository.buscaPorId(Cliente.class, cliente.getId());
+        Cliente clienteLido = clienteRepository.findAll(Cliente.class).get(0);
         if (clienteLido != null) {
             System.out.println("Cliente lido com sucesso: ");
             imprimirCliente(clienteLido);
@@ -87,6 +76,7 @@ public class TesteCliente {
 
         Cliente clienteExistente = clienteRepository.findAll(Cliente.class).get(0);
         clienteExistente.setNome("João Atualizado");
+        clienteExistente.setDtNascimento(parseDate("1991-02-02"));
         clienteRepository.salvaOuAtualiza(clienteExistente);
         transacao.commit();
 
@@ -115,13 +105,37 @@ public class TesteCliente {
         }
     }
 
+    private static void testarUnicidadeCPF() {
+        EntityTransaction transacao = manager.getTransaction();
+        transacao.begin();
+
+        Cliente clienteDuplicado = new Cliente(null, "Teste Duplicado", "12312312312", "666666666", "duplicado@example.com", parseDate("2000-01-01"), new ArrayList<>(), new ArrayList<>());
+        try {
+            clienteRepository.salvaOuAtualiza(clienteDuplicado);
+            transacao.commit();
+            System.out.println("Erro: Deveria ter falhado ao criar cliente com CPF duplicado.");
+        } catch (Exception e) {
+            transacao.rollback();
+            System.out.println("Unicidade de CPF verificada: " + e.getMessage());
+        }
+    }
+
     private static void imprimirCliente(Cliente cliente) {
         System.out.println("ID: " + cliente.getId());
         System.out.println("Nome: " + cliente.getNome());
         System.out.println("CPF: " + cliente.getCpf());
         System.out.println("Telefone: " + cliente.getTelefone());
         System.out.println("Email: " + cliente.getEmail());
-        System.out.println("Data de Nascimento: " + cliente.getDtNascimento());
+        System.out.println("Data de Nascimento: " + new SimpleDateFormat("dd/MM/yyyy").format(cliente.getDtNascimento()));
         System.out.println("=====================================");
+    }
+
+    private static Date parseDate(String dateStr) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
