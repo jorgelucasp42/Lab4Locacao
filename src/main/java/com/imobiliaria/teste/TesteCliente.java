@@ -22,25 +22,25 @@ public class TesteCliente {
     public static void main(String[] args) {
         try {
             System.out.println("========== Teste de Criação de Clientes ==========");
-           // testarCriacaoClientes();
+           testarCriacaoClientes();
 
             System.out.println("========== Teste de Leitura de Cliente ==========");
-            //testarLeituraCliente();
+            testarLeituraCliente();
 
             System.out.println("========== Teste de Atualização de Cliente ==========");
            testarAtualizacaoCliente();
 
             System.out.println("========== Teste de Remoção de Cliente ==========");
-           // testarRemocaoCliente();
+          testarRemocaoCliente();
 
             System.out.println("========== Teste de Unicidade de CPF ==========");
-            //testarUnicidadeCPF();
+            testarUnicidadeCPF();
         } finally {
             manager.close();
             factory.close();
         }
     }
-/*
+
     private static void testarCriacaoClientes() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
@@ -70,7 +70,7 @@ public class TesteCliente {
             System.out.println("Erro ao ler o cliente.");
         }
     }
-*/
+
     private static void testarAtualizacaoCliente() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
@@ -90,29 +90,32 @@ public class TesteCliente {
         }
     }
 
-    /*
-    private static void testarRemocaoCliente() {
-        EntityTransaction transacao = manager.getTransaction();
-        transacao.begin();
 
-        List<Cliente> clientes = clienteRepository.findAll(Cliente.class);
-        if (!clientes.isEmpty()) {
-            Cliente clienteExistente = clientes.get(0);
-            clienteRepository.remove(clienteExistente);
-            transacao.commit();
+private static void testarRemocaoCliente() {
+    EntityTransaction transacao = manager.getTransaction();
+    transacao.begin();
 
-            Cliente clienteRemovido = clienteRepository.buscaPorId(Cliente.class, clienteExistente.getId());
-            if (clienteRemovido == null) {
-                System.out.println("Cliente removido com sucesso.");
-            } else {
-                System.out.println("Erro ao remover o cliente.");
-            }
+    // Para remover o cliente de ID 3
+    Integer idParaRemover = 3;
+    Cliente clienteExistente = clienteRepository.buscaPorId(Cliente.class, idParaRemover);
+
+    if (clienteExistente != null) {
+        clienteRepository.remove(clienteExistente);
+        transacao.commit();
+
+        Cliente clienteRemovido = clienteRepository.buscaPorId(Cliente.class, idParaRemover);
+        if (clienteRemovido == null) {
+            System.out.println("Cliente removido com sucesso.");
         } else {
-            System.out.println("Nenhum cliente encontrado para remoção.");
-            transacao.rollback();
+            System.out.println("Erro ao remover o cliente.");
         }
-    }*/
-/*
+    } else {
+        System.out.println("Nenhum cliente encontrado para remoção.");
+        transacao.rollback();
+    }
+}
+
+
     private static void testarUnicidadeCPF() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
@@ -121,19 +124,21 @@ public class TesteCliente {
         Cliente clienteDuplicado = new Cliente(null, "Teste Duplicado", cpfDuplicado, "666666666", "duplicado@example.com", parseDate("2000-01-01"), new ArrayList<>(), new ArrayList<>());
 
         try {
-            if (clienteRepository.isCpfUnique(cpfDuplicado)) {
-                clienteRepository.salvaOuAtualiza(clienteDuplicado);
-                transacao.commit();
-                System.out.println("Erro: Deveria ter falhado ao criar cliente com CPF duplicado.");
-            } else {
-                throw new Exception("CPF duplicado detectado");
+            if (!clienteRepository.isCpfUnique(cpfDuplicado)) {
+                throw new Exception("CPF registrado no Banco de Dados!");
             }
+            clienteRepository.salvaOuAtualiza(clienteDuplicado);
+            transacao.commit();
+            System.out.println("Erro: o teste fallhou e registrou duplicado!");
         } catch (Exception e) {
-            transacao.rollback();
-            System.out.println("Unicidade de CPF verificada: " + e.getMessage());
+            if (transacao.isActive()) {
+                transacao.rollback();
+            }
+            System.out.println("Unicidade de CPF verificada com sucesso: " + e.getMessage());
         }
     }
-    */
+
+
 
     private static void imprimirCliente(Cliente cliente) {
         System.out.println("ID: " + cliente.getId());
