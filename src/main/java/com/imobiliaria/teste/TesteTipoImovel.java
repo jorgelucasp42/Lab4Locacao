@@ -24,10 +24,10 @@ public class TesteTipoImovel {
             lerTipoImovel(1);
 
             System.out.println("========== Teste de Atualização de Tipo de Imóvel ==========");
-           // atualizarTipoImovel(1);
+           atualizarTipoImovel(1);
 
             System.out.println("========== Teste de Remoção de Tipo de Imóvel ==========");
-           // removerTipoImovel(1);
+            removerTipoImovel(3);
         } finally {
             manager.close();
             factory.close();
@@ -35,10 +35,10 @@ public class TesteTipoImovel {
     }
 
     private static void criarTiposImovel() {
-        System.out.println("Teste de Criação");
+
         EntityTransaction transacao = manager.getTransaction();
         try {
-            transacao.begin();
+            transacao.begin() ;
 
             TipoImovel tipo1 = new TipoImovel(null, "Apartamento", new ArrayList<>());
             TipoImovel tipo2 = new TipoImovel(null, "Casa", new ArrayList<>());
@@ -70,7 +70,7 @@ public class TesteTipoImovel {
             System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
         }
     }
-/*
+
     private static void atualizarTipoImovel(int idTipoImovel) {
         System.out.println("Teste de Atualização");
         TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
@@ -92,10 +92,10 @@ public class TesteTipoImovel {
         } else {
             System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
         }
-    }*/
-/*
+    }
+
     private static void removerTipoImovel(int idTipoImovel) {
-        System.out.println("Teste de Remoção");
+        System.out.println("Remoção do ID:"+ idTipoImovel+".");
         TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
         if (tipoImovel != null) {
             EntityTransaction transacao = manager.getTransaction();
@@ -103,7 +103,7 @@ public class TesteTipoImovel {
                 transacao.begin();
 
                 tipoImovelRepository.remove(tipoImovel);
-                System.out.println("Tipo de Imóvel removido com sucesso: " + idTipoImovel);
+                System.out.println("Tipo de Imóvel removido com sucesso: " + idTipoImovel+".");
 
                 transacao.commit();
             } catch (Exception e) {
@@ -111,13 +111,13 @@ public class TesteTipoImovel {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
+            System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel+".");
         }
     }
-*/
+
     private static void imprimirTipoImovel(TipoImovel tipoImovel) {
         System.out.println("ID: " + tipoImovel.getId());
         System.out.println("Descrição: " + tipoImovel.getDescricao());
-        System.out.println("=====================================");
+        System.out.println("**************************************");
     }
 }

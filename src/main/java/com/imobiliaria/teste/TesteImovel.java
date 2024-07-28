@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
 
 public class TesteImovel {
 
@@ -19,116 +20,129 @@ public class TesteImovel {
     private static EntityManager manager = factory.createEntityManager();
     private static ImovelRepository imovelRepository = new ImovelRepository(manager);
     private static ClienteRepository clienteRepository = new ClienteRepository(manager);
-    private static TipoImovelRepository  tipoImovelRepository = new TipoImovelRepository(manager);
+    private static TipoImovelRepository tipoImovelRepository = new TipoImovelRepository(manager);
 
     public static void main(String[] args) {
-        // OBSERVAÇÃO: Antes de Realizar os Seguintes Testes Crie um Cliente e Um TipoImóvel nas
-        // respectivas Classes de Testes
         try {
-            testCreate(1,1); // Para criar diferentes imóveis altere os campos no método getImovel
-//            testRead(1);
-//            testUpdate(1);
-//            testDelete(2);
+            System.out.println("========== Teste de Criação de Imóveis ==========");
+            criarImovel(1, 1);
+
+            System.out.println("========== Teste de Leitura de Imóvel ==========");
+            lerImovel(1);
+
+            System.out.println("========== Teste de Atualização de Imóvel ==========");
+            atualizarImovel(1);
+
+            System.out.println("========== Teste de Remoção de Imóvel ==========");
+            removerImovel(2);
         } finally {
             manager.close();
             factory.close();
         }
     }
-    private static @NotNull Imovel getImovel(TipoImovel tipoImovel, Cliente cliente) {
-        Imovel  imovel = new Imovel();
-        imovel.setTipoImovel(tipoImovel);
-        imovel.setProprietario(cliente);
-        imovel.setLogradouro("Rua Exemplo 2");
-        imovel.setBairro("Bairro Exemplo 2");
-        imovel.setCep("12345-679");
-        imovel.setMetragem(100);
-        imovel.setDormitorios((byte) 2);
-        imovel.setBanheiros((byte) 1);
-        imovel.setSuites((byte) 1);
-        imovel.setVagasGaragem((byte) 1);
-        imovel.setValorAluguelSugerido(1500.00);
-        imovel.setObs("Observação exemplo 2");
-        return imovel;
+
+    private static @NotNull Imovel criarImovelConstrutor(TipoImovel tipoImovel, Cliente cliente) {
+        return new Imovel(null, tipoImovel, cliente, "Rua Exemplo 2", "Bairro Exemplo 2", "12345-679", 100,
+                (byte) 2, (byte) 1, (byte) 1, (byte) 1, 1500.00, "Observação exemplo 2", new ArrayList<>(), new ArrayList<>());
     }
 
-    private static void testCreate(int idCliente, int idTipoImovel) {
-        System.out.println("Test Create");
-        EntityTransaction  transaction = manager.getTransaction();
+    private static void criarImovel(int idCliente, int idTipoImovel) {
+        EntityTransaction transacao = manager.getTransaction();
         try {
-            transaction.begin();
+            transacao.begin();
 
-            Cliente  cliente = clienteRepository.buscaPorId(Cliente.class, idCliente); // Substitua pelo ID correto
-            TipoImovel  tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel); // Substitua pelo ID correto
+            Cliente cliente = clienteRepository.buscaPorId(Cliente.class, idCliente);
+            TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
 
-            Imovel imovel = getImovel(tipoImovel, cliente);
+            if (cliente == null) {
+                System.out.println("Cliente não encontrado com ID: " + idCliente);
+                return;
+            }
 
+            if (tipoImovel == null) {
+                System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
+                return;
+            }
+
+            Imovel imovel = criarImovelConstrutor(tipoImovel, cliente);
             imovel = imovelRepository.salvaOuAtualiza(imovel);
 
-            transaction.commit();
-            System.out.println("Imovel cirado com ID: " + imovel.getId());
+            transacao.commit();
+            System.out.println("Imóvel criado com sucesso.");
+            imprimirImovel(imovel);
         } catch (Exception e) {
-            transaction.rollback();
+            transacao.rollback();
             e.printStackTrace();
         }
     }
 
-
-    private static void testRead(int idImovel) {
-        System.out.println("Test Read");
-        Integer id = idImovel; // Substitua pelo ID correto que você espera que exista
-        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, id);
+    private static void lerImovel(int idImovel) {
+        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, idImovel);
         if (imovel != null) {
-            System.out.println("Imovel encontrado: " + imovel.getLogradouro() + ", " + imovel.getBairro());
+            System.out.println("Imóvel encontrado:");
+            imprimirImovel(imovel);
         } else {
-            System.out.println("Imovel não encontrado com ID: " + id);
+            System.out.println("Imóvel não encontrado com ID: " + idImovel);
         }
     }
 
-    private static void testUpdate(int idImovel) {
-        System.out.println("Test Update");
-        Integer id = idImovel; // Substitua pelo ID correto que você espera que exista
-        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, id);
+    private static void atualizarImovel(int idImovel) {
+
+        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, idImovel);
         if (imovel != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 imovel.setLogradouro("Rua Atualizada");
                 imovel.setValorAluguelSugerido(1800.00);
                 imovel = imovelRepository.salvaOuAtualiza(imovel);
 
-                transaction.commit();
-                System.out.println("Imovel atualizado com ID: " + imovel.getId());
-                System.out.println(imovel.toString());
-
+                transacao.commit();
+                System.out.println("Imóvel atualizado com sucesso.");
+                imprimirImovel(imovel);
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Imovel não encontrado com ID: " + id);
+            System.out.println("Imóvel não encontrado com ID: " + idImovel);
         }
     }
 
-    private static void testDelete(int idImovel) {
-        System.out.println("Test Delete");
-        Integer id = idImovel; // Substitua pelo ID correto que você espera que exista
-        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, id);
+    private static void removerImovel(int idImovel) {
+        Imovel imovel = imovelRepository.buscaPorId(Imovel.class, idImovel);
         if (imovel != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 imovelRepository.remove(imovel);
-                System.out.println("Imovel deletado com ID: " + id);
-
-                transaction.commit();
+                transacao.commit();
+                System.out.println("Imóvel removido com sucesso.");
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Imovel não encontrado com ID: " + id);
+            System.out.println("Imóvel não encontrado com ID: " + idImovel);
         }
+    }
+
+    private static void imprimirImovel(Imovel imovel) {
+        System.out.println("ID: " + imovel.getId());
+        System.out.println("Tipo de Imóvel: " + imovel.getTipoImovel().getDescricao());
+        System.out.println("Proprietário: " + imovel.getProprietario().getNome());
+        System.out.println("Logradouro: " + imovel.getLogradouro());
+        System.out.println("Bairro: " + imovel.getBairro());
+        System.out.println("CEP: " + imovel.getCep());
+        System.out.println("Metragem: " + imovel.getMetragem());
+        System.out.println("Dormitórios: " + imovel.getDormitorios());
+        System.out.println("Banheiros: " + imovel.getBanheiros());
+        System.out.println("Suítes: " + imovel.getSuites());
+        System.out.println("Vagas de Garagem: " + imovel.getVagasGaragem());
+        System.out.println("Valor do Aluguel Sugerido: " + imovel.getValorAluguelSugerido());
+        System.out.println("Observações: " + imovel.getObs());
+        System.out.println("*******************************************");
     }
 }
