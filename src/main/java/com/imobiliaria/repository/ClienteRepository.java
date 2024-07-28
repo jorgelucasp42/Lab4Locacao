@@ -32,4 +32,12 @@ public class ClienteRepository extends DAOGenerico<Cliente> {
         }
         return cliente;
     }
+
+    public boolean isCpfUnique(String cpf) {
+        EntityManager em = getManager();
+        TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.cpf = :cpf", Cliente.class);
+        query.setParameter("cpf", cpf);
+        List<Cliente> resultados = query.getResultList();
+        return resultados.isEmpty();
+    }
 }

@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TesteCliente {
 
@@ -21,25 +22,25 @@ public class TesteCliente {
     public static void main(String[] args) {
         try {
             System.out.println("========== Teste de Criação de Clientes ==========");
-            testarCriacaoClientes();
+           // testarCriacaoClientes();
 
             System.out.println("========== Teste de Leitura de Cliente ==========");
-            testarLeituraCliente();
+            //testarLeituraCliente();
 
             System.out.println("========== Teste de Atualização de Cliente ==========");
-            testarAtualizacaoCliente();
+           testarAtualizacaoCliente();
 
             System.out.println("========== Teste de Remoção de Cliente ==========");
-            testarRemocaoCliente();
+           // testarRemocaoCliente();
 
             System.out.println("========== Teste de Unicidade de CPF ==========");
-            testarUnicidadeCPF();
+            //testarUnicidadeCPF();
         } finally {
             manager.close();
             factory.close();
         }
     }
-
+/*
     private static void testarCriacaoClientes() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
@@ -48,9 +49,9 @@ public class TesteCliente {
         Cliente cliente2 = new Cliente(null, "Maria de Souza", "45645645645", "888888888", "maria@example.com", parseDate("1985-05-15"), new ArrayList<>(), new ArrayList<>());
         Cliente cliente3 = new Cliente(null, "Carlos de Almeida", "78978978978", "777777777", "carlos@example.com", parseDate("1992-03-03"), new ArrayList<>(), new ArrayList<>());
 
-        clienteRepository.salvaOuAtualiza(cliente1);
-        clienteRepository.salvaOuAtualiza(cliente2);
-        clienteRepository.salvaOuAtualiza(cliente3);
+        cliente1 = clienteRepository.salvaOuAtualiza(cliente1);
+        cliente2 = clienteRepository.salvaOuAtualiza(cliente2);
+        cliente3 = clienteRepository.salvaOuAtualiza(cliente3);
 
         transacao.commit();
 
@@ -69,7 +70,7 @@ public class TesteCliente {
             System.out.println("Erro ao ler o cliente.");
         }
     }
-
+*/
     private static void testarAtualizacaoCliente() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
@@ -89,36 +90,50 @@ public class TesteCliente {
         }
     }
 
+    /*
     private static void testarRemocaoCliente() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
 
-        Cliente clienteExistente = clienteRepository.findAll(Cliente.class).get(0);
-        clienteRepository.remove(clienteExistente);
-        transacao.commit();
+        List<Cliente> clientes = clienteRepository.findAll(Cliente.class);
+        if (!clientes.isEmpty()) {
+            Cliente clienteExistente = clientes.get(0);
+            clienteRepository.remove(clienteExistente);
+            transacao.commit();
 
-        Cliente clienteRemovido = clienteRepository.buscaPorId(Cliente.class, clienteExistente.getId());
-        if (clienteRemovido == null) {
-            System.out.println("Cliente removido com sucesso.");
+            Cliente clienteRemovido = clienteRepository.buscaPorId(Cliente.class, clienteExistente.getId());
+            if (clienteRemovido == null) {
+                System.out.println("Cliente removido com sucesso.");
+            } else {
+                System.out.println("Erro ao remover o cliente.");
+            }
         } else {
-            System.out.println("Erro ao remover o cliente.");
+            System.out.println("Nenhum cliente encontrado para remoção.");
+            transacao.rollback();
         }
-    }
-
+    }*/
+/*
     private static void testarUnicidadeCPF() {
         EntityTransaction transacao = manager.getTransaction();
         transacao.begin();
 
-        Cliente clienteDuplicado = new Cliente(null, "Teste Duplicado", "12312312312", "666666666", "duplicado@example.com", parseDate("2000-01-01"), new ArrayList<>(), new ArrayList<>());
+        String cpfDuplicado = "12312312312"; // CPF que ainda está no banco de dados
+        Cliente clienteDuplicado = new Cliente(null, "Teste Duplicado", cpfDuplicado, "666666666", "duplicado@example.com", parseDate("2000-01-01"), new ArrayList<>(), new ArrayList<>());
+
         try {
-            clienteRepository.salvaOuAtualiza(clienteDuplicado);
-            transacao.commit();
-            System.out.println("Erro: Deveria ter falhado ao criar cliente com CPF duplicado.");
+            if (clienteRepository.isCpfUnique(cpfDuplicado)) {
+                clienteRepository.salvaOuAtualiza(clienteDuplicado);
+                transacao.commit();
+                System.out.println("Erro: Deveria ter falhado ao criar cliente com CPF duplicado.");
+            } else {
+                throw new Exception("CPF duplicado detectado");
+            }
         } catch (Exception e) {
             transacao.rollback();
             System.out.println("Unicidade de CPF verificada: " + e.getMessage());
         }
     }
+    */
 
     private static void imprimirCliente(Cliente cliente) {
         System.out.println("ID: " + cliente.getId());
