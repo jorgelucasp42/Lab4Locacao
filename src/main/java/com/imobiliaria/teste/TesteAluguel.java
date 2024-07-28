@@ -20,10 +20,13 @@ public class TesteAluguel {
     private static AluguelService aluguelService = new AluguelService(manager);
 
     public static void main(String[] args) {
-        // OBSERVAÇÃO: Antes de Realizar os Seguintes execute a Classe TesteLocacao
+        // OBSERVAÇÃO: Antes de testar esta classe, execute a Classe TesteLocacao
         try {
             System.out.println("========== Teste de Criação de Aluguel ==========");
             criarAluguel(1);
+
+            System.out.println("========== Teste de Criação de Aluguel com Atraso ==========");
+            criarAluguelComAtraso(2);
 
             System.out.println("========== Teste de Leitura de Aluguel ==========");
             lerAluguel(1);
@@ -31,8 +34,8 @@ public class TesteAluguel {
             System.out.println("========== Teste de Atualização de Aluguel ==========");
             atualizarAluguel(1);
 
-            //System.out.println("========== Teste de Remoção de Aluguel ==========");
-            //removerAluguel(1);
+            System.out.println("========== Teste de Remoção de Aluguel ==========");
+            removerAluguel(1);
 
             System.out.println("========== Teste de Imóveis Disponíveis com Valor Inferior ou Igual ==========");
             findImoveisDisponiveisComValorInferiorOuIgual(2500.00);
@@ -44,7 +47,7 @@ public class TesteAluguel {
             findAlugueisPagosComAtraso();
 
             System.out.println("========== Teste de Registro de Pagamento ==========");
-            registrarPagamento(1);
+           registrarPagamento(2);
         } finally {
             manager.close();
             factory.close();
@@ -53,6 +56,12 @@ public class TesteAluguel {
 
     private static Aluguel criarAluguelConstrutor(Locacao locacao) {
         return new Aluguel(null, locacao, new Date(), 1500.00, new Date(), "Pagamento em dia");
+    }
+
+    private static Aluguel criarAluguelComAtrasoConstrutor(Locacao locacao) {
+        Date dataVencimento = new Date(System.currentTimeMillis() - 86400000L * 10); // Data de vencimento 10 dias atrás
+        Date dataPagamento = new Date(); // Data de pagamento atual
+        return new Aluguel(null, locacao, dataVencimento, 1600.00, dataPagamento, "Pagamento com atraso");
     }
 
     private static void criarAluguel(int idLocacao) {
@@ -73,6 +82,30 @@ public class TesteAluguel {
             transacao.commit();
             imprimirAluguel(aluguel);
             System.out.println("Aluguel criado com sucesso.");
+        } catch (Exception e) {
+            transacao.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    private static void criarAluguelComAtraso(int idLocacao) {
+        EntityTransaction transacao = manager.getTransaction();
+        try {
+            transacao.begin();
+
+            Locacao locacao = manager.find(Locacao.class, idLocacao);
+
+            if (locacao == null) {
+                System.out.println("Locação não encontrada com ID: " + idLocacao);
+                return;
+            }
+
+            Aluguel aluguel = criarAluguelComAtrasoConstrutor(locacao);
+            aluguel = aluguelRepository.salvaOuAtualiza(aluguel);
+
+            transacao.commit();
+            imprimirAluguel(aluguel);
+            System.out.println("Aluguel criado com atraso com sucesso.");
         } catch (Exception e) {
             transacao.rollback();
             e.printStackTrace();
@@ -149,7 +182,7 @@ public class TesteAluguel {
     private static void findAlugueisPagosComAtraso() {
         List<Aluguel> alugueis = aluguelRepository.findAlugueisPagosComAtraso();
         for (Aluguel aluguel : alugueis) {
-            System.out.println("Aluguel pago com atraso: " + aluguel.getId());
+            System.out.println("Aluguel pago com atraso: ID-" + aluguel.getId());
         }
     }
 

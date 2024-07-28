@@ -2,12 +2,17 @@ package com.imobiliaria.model;
 
 import javax.persistence.*;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "ALUGUEIS")
-public @Data class Aluguel implements EntidadeBase {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Aluguel implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -33,14 +38,5 @@ public @Data class Aluguel implements EntidadeBase {
     @Override
     public Integer getId() {
         return id;
-    }
-
-    public Aluguel(Integer id, Locacao locacao, Date dataVencimento, Double valorPago, Date dataPagamento, String obs) {
-        this.id = id;
-        this.locacao = locacao;
-        this.dataVencimento = dataVencimento;
-        this.valorPago = valorPago;
-        this.dataPagamento = dataPagamento;
-        this.obs = obs;
     }
 }
