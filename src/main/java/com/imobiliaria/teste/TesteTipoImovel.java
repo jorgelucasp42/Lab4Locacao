@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
 
 public class TesteTipoImovel {
 
@@ -16,89 +17,107 @@ public class TesteTipoImovel {
 
     public static void main(String[] args) {
         try {
-            testCreate();
-//            testRead(1);
-//            testUpdate(1);
-//            testDelete(1);
+            System.out.println("========== Teste de Criação de Tipos de Imóveis ==========");
+            criarTiposImovel();
+
+            System.out.println("========== Teste de Leitura de Tipo de Imóvel ==========");
+            lerTipoImovel(1);
+
+            System.out.println("========== Teste de Atualização de Tipo de Imóvel ==========");
+           atualizarTipoImovel(1);
+
+            System.out.println("========== Teste de Remoção de Tipo de Imóvel ==========");
+            removerTipoImovel(3);
         } finally {
             manager.close();
             factory.close();
         }
-
     }
 
-    private static void testCreate() {
-        System.out.println("Test Create");
-        EntityTransaction transaction = manager.getTransaction();
+    private static void criarTiposImovel() {
+
+        EntityTransaction transacao = manager.getTransaction();
         try {
-            transaction.begin();
+            transacao.begin() ;
 
-            TipoImovel tipoImovel = new TipoImovel();
-            tipoImovel.setDescricao("Apartamento");
+            TipoImovel tipo1 = new TipoImovel(null, "Apartamento", new ArrayList<>());
+            TipoImovel tipo2 = new TipoImovel(null, "Casa", new ArrayList<>());
+            TipoImovel tipo3 = new TipoImovel(null, "Loja", new ArrayList<>());
 
-            tipoImovel = tipoImovelRepository.salvaOuAtualiza(tipoImovel);
-            System.out.println("TipoImovel criado com ID: " + tipoImovel.getId());
+            tipo1 = tipoImovelRepository.salvaOuAtualiza(tipo1);
+            tipo2 = tipoImovelRepository.salvaOuAtualiza(tipo2);
+            tipo3 = tipoImovelRepository.salvaOuAtualiza(tipo3);
 
-            transaction.commit();
+            System.out.println("Tipos de Imóvel criados com sucesso.");
+            imprimirTipoImovel(tipo1);
+            imprimirTipoImovel(tipo2);
+            imprimirTipoImovel(tipo3);
+
+            transacao.commit();
         } catch (Exception e) {
-            transaction.rollback();
+            transacao.rollback();
             e.printStackTrace();
         }
     }
 
-    private static void testRead(int idTipoImovel) {
-        System.out.println("Test Read");
-        Integer id = idTipoImovel;
-        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, id);
+    private static void lerTipoImovel(int idTipoImovel) {
+        System.out.println("Teste de Leitura");
+        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
         if (tipoImovel != null) {
-            System.out.println("TipoImovel encontrado: " + tipoImovel.getDescricao());
+            System.out.println("Tipo de Imóvel encontrado: ");
+            imprimirTipoImovel(tipoImovel);
         } else {
-            System.out.println("TipoImovel não encontrado com ID: " + id);
+            System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
         }
     }
 
-    private static void testUpdate(int idTipoImovel) {
-        System.out.println("Test Update");
-        Integer id = idTipoImovel;
-        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, id);
+    private static void atualizarTipoImovel(int idTipoImovel) {
+        System.out.println("Teste de Atualização");
+        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
         if (tipoImovel != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 tipoImovel.setDescricao("Apartamento Atualizado");
                 tipoImovel = tipoImovelRepository.salvaOuAtualiza(tipoImovel);
 
-                transaction.commit();
-                System.out.println("TipoImovel atualizado com ID: " + tipoImovel.getId());
+                transacao.commit();
+                System.out.println("Tipo de Imóvel atualizado com sucesso: ");
+                imprimirTipoImovel(tipoImovel);
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("TipoImovel não encontrado com ID: " + id);
+            System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel);
         }
     }
 
-    private static void testDelete(int idTipoImovel) {
-        System.out.println("Test Delete");
-        Integer id = idTipoImovel;
-        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, id);
+    private static void removerTipoImovel(int idTipoImovel) {
+        System.out.println("Remoção do ID:"+ idTipoImovel+".");
+        TipoImovel tipoImovel = tipoImovelRepository.buscaPorId(TipoImovel.class, idTipoImovel);
         if (tipoImovel != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 tipoImovelRepository.remove(tipoImovel);
-                System.out.println("TipoImovel deletado com ID: " + id);
+                System.out.println("Tipo de Imóvel removido com sucesso: " + idTipoImovel+".");
 
-                transaction.commit();
+                transacao.commit();
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("TipoImovel não encontrado com ID: " + id);
+            System.out.println("Tipo de Imóvel não encontrado com ID: " + idTipoImovel+".");
         }
+    }
+
+    private static void imprimirTipoImovel(TipoImovel tipoImovel) {
+        System.out.println("ID: " + tipoImovel.getId());
+        System.out.println("Descrição: " + tipoImovel.getDescricao());
+        System.out.println("**************************************");
     }
 }

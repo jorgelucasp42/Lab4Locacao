@@ -2,12 +2,17 @@ package com.imobiliaria.model;
 
 import javax.persistence.*;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "ALUGUEIS")
-public @Data class Aluguel implements EntidadeBase {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Aluguel implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

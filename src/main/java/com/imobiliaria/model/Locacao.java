@@ -2,6 +2,8 @@ package com.imobiliaria.model;
 
 import javax.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,8 +11,10 @@ import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "LOCACAO")
-public class Locacao implements EntidadeBase{
+public class Locacao implements EntidadeBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

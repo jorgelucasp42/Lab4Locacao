@@ -7,101 +7,119 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
+
+// OBSERVAÇÃO: Execute antes a classe TesteServicosImovel
 
 public class TesteProfissional {
-    private static EntityManagerFactory  factory = Persistence .createEntityManagerFactory("lab_jpa");
+    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
     private static EntityManager manager = factory.createEntityManager();
-    private static ProfissionalRepository  profissionalRepository = new ProfissionalRepository(manager);
+    private static ProfissionalRepository profissionalRepository = new ProfissionalRepository(manager);
+
     public static void main(String[] args) {
         try {
-//            testCreate();
-//            testRead(1);
-//            testUpdate(1);
-            testDelete(2);
+            System.out.println("========== Teste de Criação de Profissionais ==========");
+            criarProfissional();
+
+            System.out.println("========== Teste de Leitura de Profissional ==========");
+            lerProfissional(1);
+
+            System.out.println("========== Teste de Atualização de Profissional ==========");
+            atualizarProfissional(1);
+
+            System.out.println("========== Teste de Remoção de Profissional ==========");
+            removerProfissional(2);
         } finally {
             manager.close();
             factory.close();
         }
     }
-    private static void testCreate() {
-        System.out.println("Test Create");
-        EntityTransaction transaction = manager.getTransaction();
+
+    private static void criarProfissional() {
+        EntityTransaction transacao = manager.getTransaction();
         try {
-            transaction.begin();
+            transacao.begin();
 
-            Profissional profissional = new Profissional();
-            profissional.setNome("Mariano Santos");
-            profissional.setProfissao("Encanador");
-            profissional.setTelefone1("987987987");
-            profissional.setTelefone2("123123123");
-            profissional.setValorHora(50.00);
-            profissional.setObs("Profissional qualificado");
+            Profissional profissional1 = new Profissional(null, "Mariano Santos", "Encanador", "987987987", "123123123", 50.00, "Profissional qualificado", new ArrayList<>());
+            Profissional profissional2 = new Profissional(null, "Ana Paula", "Eletricista", "987654321", "321321321", 60.00, "Profissional experiente", new ArrayList<>());
 
-            profissional = profissionalRepository.salvaOuAtualiza(profissional);
+            profissional1 = profissionalRepository.salvaOuAtualiza(profissional1);
+            profissional2 = profissionalRepository.salvaOuAtualiza(profissional2);
 
-            transaction.commit();
-            System.out.println("Profissional criado com ID: " + profissional.getId());
+            transacao.commit();
+
+            imprimirProfissional(profissional1);
+            imprimirProfissional(profissional2);
+
+            System.out.println("Profissionais criados com sucesso.");
         } catch (Exception e) {
-            transaction.rollback();
+            transacao.rollback();
             e.printStackTrace();
         }
     }
 
-    private static void testRead(int idProfissional) {
-        System.out.println("Test Read");
-        Integer id = idProfissional; // Substitua pelo ID correto que você espera que exista
-        Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, id);
+    private static void lerProfissional(int idProfissional) {
+        Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, idProfissional);
         if (profissional != null) {
-            System.out.println("Profissional encontrado: " + profissional.getNome() + ", " + profissional.getProfissao());
+            System.out.println("Profissional encontrado:");
+            imprimirProfissional(profissional);
         } else {
-            System.out.println("Profissional não encontrado com ID: " + id);
+            System.out.println("Profissional não encontrado com ID: " + idProfissional);
         }
     }
 
-    private static void testUpdate(int idProfissional) {
-        System.out.println("Test Update");
-        Integer id = idProfissional; // Substitua pelo ID correto que você espera que exista
-        Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, id);
+    private static void atualizarProfissional(int idProfissional) {
+        Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, idProfissional);
         if (profissional != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 profissional.setTelefone1("1122334455");
                 profissional.setValorHora(60.00);
                 profissional.setObs("Atualização de observação");
                 profissional = profissionalRepository.salvaOuAtualiza(profissional);
 
-                transaction.commit();
-                System.out.println("Profissional atualizado com ID: " + profissional.getId());
+                transacao.commit();
+
+                imprimirProfissional(profissional);
+                System.out.println("Profissional atualizado com sucesso.");
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Profissional não encontrado com ID: " + id);
+            System.out.println("Profissional não encontrado com ID: " + idProfissional);
         }
     }
 
-    private static void testDelete(int idProfissional) {
-        System.out.println("Test Delete");
-        Integer id = idProfissional; // Substitua pelo ID correto que você espera que exista
-        Profissional  profissional = profissionalRepository.buscaPorId(Profissional.class, id);
+    private static void removerProfissional(int idProfissional) {
+        Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, idProfissional);
         if (profissional != null) {
-            EntityTransaction  transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 profissionalRepository.remove(profissional);
-                System.out.println("Profissional deletado com ID: " + id);
-
-                transaction.commit();
+                transacao.commit();
+                System.out.println("Profissional removido com sucesso.");
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Profissional não encontrado com ID: " + id);
+            System.out.println("Profissional não encontrado com ID: " + idProfissional);
         }
+    }
+
+    private static void imprimirProfissional(Profissional profissional) {
+        System.out.println("ID: " + profissional.getId());
+        System.out.println("Nome: " + profissional.getNome());
+        System.out.println("Profissão: " + profissional.getProfissao());
+        System.out.println("Telefone 1: " + profissional.getTelefone1());
+        System.out.println("Telefone 2: " + profissional.getTelefone2());
+        System.out.println("Valor Hora: " + profissional.getValorHora());
+        System.out.println("Observações: " + profissional.getObs());
+        System.out.println("=====================================");
     }
 }

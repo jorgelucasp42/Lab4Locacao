@@ -2,6 +2,8 @@ package com.imobiliaria.model;
 
 import javax.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.StringJoiner;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "IMOVEIS")
 public class Imovel implements EntidadeBase {
     @Id
@@ -63,9 +67,18 @@ public class Imovel implements EntidadeBase {
     public String toString() {
         return new StringJoiner(", ", Imovel.class.getSimpleName() + "[", "]")
                 .add("id=" + id)
+                .add("tipoImovel=" + tipoImovel.getDescricao())
+                .add("proprietario=" + proprietario.getNome())
                 .add("logradouro='" + logradouro + "'")
+                .add("bairro='" + bairro + "'")
+                .add("cep='" + cep + "'")
+                .add("metragem=" + metragem)
+                .add("dormitorios=" + dormitorios)
+                .add("banheiros=" + banheiros)
+                .add("suites=" + suites)
+                .add("vagasGaragem=" + vagasGaragem)
                 .add("valorAluguelSugerido=" + valorAluguelSugerido)
-                // Adicione os outros atributos aqui
+                .add("obs='" + obs + "'")
                 .toString();
     }
 }

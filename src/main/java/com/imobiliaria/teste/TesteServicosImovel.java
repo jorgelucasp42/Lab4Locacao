@@ -14,105 +14,127 @@ import javax.persistence.Persistence;
 import java.util.Date;
 
 public class TesteServicosImovel {
-    private static EntityManagerFactory  factory = Persistence .createEntityManagerFactory("lab_jpa");
-    private static EntityManager  manager = factory.createEntityManager();
-    private static ServicoImovelRepository  servicoImovelRepository = new ServicoImovelRepository(manager);
+    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
+    private static EntityManager manager = factory.createEntityManager();
+    private static ServicoImovelRepository servicoImovelRepository = new ServicoImovelRepository(manager);
     private static ImovelRepository imovelRepository = new ImovelRepository(manager);
     private static ProfissionalRepository profissionalRepository = new ProfissionalRepository(manager);
+
     public static void main(String[] args) {
-        // OBSERVAÇÃO: Antes de Realizar os Seguintes Testes Crie um Profissional e Um Imovel nas
-        // respectivas Classes de Testes
+        // OBSERVAÇÃO: Execute antes a classe PopulaBanco
         try {
-//            testCreate(1, 2);
-//            testRead(1);
-//            testUpdate(1);
-            testDelete(2);
+            System.out.println("========== Teste de Criação de Serviços de Imóvel ==========");
+            criarServicoImovel(1, 1);
+
+            System.out.println("========== Teste de Leitura de Serviço de Imóvel ==========");
+            lerServicoImovel(1);
+
+            System.out.println("========== Teste de Atualização de Serviço de Imóvel ==========");
+            atualizarServicoImovel(1);
+
+            System.out.println("========== Teste de Remoção de Serviço de Imóvel ==========");
+            removerServicoImovel(1);
         } finally {
             manager.close();
             factory.close();
         }
     }
 
-    private static void testCreate(int idImovel, int idProfissional) {
-        System.out.println("Test Create");
-        EntityTransaction transaction = manager.getTransaction();
+    private static ServicoImovel criarServicoImovelConstrutor(Imovel imovel, Profissional profissional) {
+        return new ServicoImovel(null, profissional, imovel, new Date(), 500.00, "Reparo sala de estar");
+    }
+
+    private static void criarServicoImovel(int idImovel, int idProfissional) {
+        EntityTransaction transacao = manager.getTransaction();
         try {
-            transaction.begin();
+            transacao.begin();
 
-            Imovel  imovel = imovelRepository.buscaPorId(Imovel.class, idImovel); // Substitua pelo ID correto
-            Profissional  profissional = profissionalRepository.buscaPorId(Profissional.class, idProfissional); // Substitua pelo ID correto
+            Imovel imovel = imovelRepository.buscaPorId(Imovel.class, idImovel);
+            Profissional profissional = profissionalRepository.buscaPorId(Profissional.class, idProfissional);
 
-            ServicoImovel servicoImovel = new ServicoImovel();
-            servicoImovel.setImovel(imovel);
-            servicoImovel.setProfissional(profissional);
-            servicoImovel.setDataServico(new Date() );
-            servicoImovel.setValorTotal(500.00);
-            servicoImovel.setObs("Reparo sala de estar");
+            if (imovel == null) {
+                System.out.println("Imóvel não encontrado com ID: " + idImovel);
+                return;
+            }
 
+            if (profissional == null) {
+                System.out.println("Profissional não encontrado com ID: " + idProfissional);
+                return;
+            }
+
+            ServicoImovel servicoImovel = criarServicoImovelConstrutor(imovel, profissional);
             servicoImovel = servicoImovelRepository.salvaOuAtualiza(servicoImovel);
-            System.out.println("ServicoImovel criado com ID: " + servicoImovel.getId());
 
-            transaction.commit();
+            transacao.commit();
+            imprimirServicoImovel(servicoImovel);
+            System.out.println("Serviço de Imóvel criado com sucesso.");
+
         } catch (Exception e) {
-            transaction.rollback();
+            transacao.rollback();
             e.printStackTrace();
         }
     }
 
-    private static void testRead(int idServico) {
-        System.out.println("Test Read");
-        Integer id = idServico; // Substitua pelo ID correto que você espera que exista
-        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, id);
+    private static void lerServicoImovel(int idServico) {
+        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, idServico);
         if (servicoImovel != null) {
-            System.out.println("ServicoImovel encontrado: " + servicoImovel.getProfissional().getNome() + ", " + servicoImovel.getImovel().getLogradouro());
+            System.out.println("Serviço de Imóvel encontrado:");
+            imprimirServicoImovel(servicoImovel);
         } else {
-            System.out.println("ServicoImovel não encontrado com ID: " + id);
+            System.out.println("Serviço de Imóvel não encontrado com ID: " + idServico);
         }
     }
 
-    private static void testUpdate(int idServico) {
-        System.out.println("Test Update");
-        Integer id = idServico; // Substitua pelo ID correto que você espera que exista
-        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, id);
+    private static void atualizarServicoImovel(int idServico) {
+        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, idServico);
         if (servicoImovel != null) {
-            EntityTransaction transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 servicoImovel.setValorTotal(600.00);
                 servicoImovel.setObs("Atualização de observação");
                 servicoImovel = servicoImovelRepository.salvaOuAtualiza(servicoImovel);
 
-                transaction.commit();
-                System.out.println("ServicoImovel atualziado com ID: " + servicoImovel.getId());
+                transacao.commit();
+                imprimirServicoImovel(servicoImovel);
+                System.out.println("Serviço de Imóvel atualizado com sucesso.");
+
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("ServicoImovel não encontrado com ID: " + id);
+            System.out.println("Serviço de Imóvel não encontrado com ID: " + idServico);
         }
     }
 
-    private static void testDelete(int idServico) {
-        System.out.println("Test Delete");
-        Integer id = idServico; // Substitua pelo ID correto que você espera que exista
-        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, id);
+    private static void removerServicoImovel(int idServico) {
+        ServicoImovel servicoImovel = servicoImovelRepository.buscaPorId(ServicoImovel.class, idServico);
         if (servicoImovel != null) {
-            EntityTransaction  transaction = manager.getTransaction();
+            EntityTransaction transacao = manager.getTransaction();
             try {
-                transaction.begin();
+                transacao.begin();
 
                 servicoImovelRepository.remove(servicoImovel);
-
-                transaction.commit();
-                System.out.println("ServicoImovel deletado com ID: " + id);
+                transacao.commit();
+                System.out.println("Serviço de Imóvel removido com sucesso.");
             } catch (Exception e) {
-                transaction.rollback();
+                transacao.rollback();
                 e.printStackTrace();
             }
         } else {
-            System.out.println("ServicoImovel não encontrado com ID: " + id);
+            System.out.println("Serviço de Imóvel não encontrado com ID: " + idServico);
         }
+    }
+
+    private static void imprimirServicoImovel(ServicoImovel servicoImovel) {
+        System.out.println("ID: " + servicoImovel.getId());
+        System.out.println("Profissional: " + servicoImovel.getProfissional().getNome());
+        System.out.println("Imóvel: " + servicoImovel.getImovel().getLogradouro());
+        System.out.println("Data do Serviço: " + servicoImovel.getDataServico());
+        System.out.println("Valor Total: " + servicoImovel.getValorTotal());
+        System.out.println("Observações: " + servicoImovel.getObs());
+        System.out.println("=====================================");
     }
 }
