@@ -9,4 +9,3 @@ public class TipoImovelRepository extends DAOGenerico<TipoImovel> {
         super(manager);
     }
 }
-
