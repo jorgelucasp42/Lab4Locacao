@@ -34,4 +34,13 @@ public @Data class Aluguel implements EntidadeBase {
     public Integer getId() {
         return id;
     }
+
+    public Aluguel(Integer id, Locacao locacao, Date dataVencimento, Double valorPago, Date dataPagamento, String obs) {
+        this.id = id;
+        this.locacao = locacao;
+        this.dataVencimento = dataVencimento;
+        this.valorPago = valorPago;
+        this.dataPagamento = dataPagamento;
+        this.obs = obs;
+    }
 }

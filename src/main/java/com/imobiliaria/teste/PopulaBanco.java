@@ -1,5 +1,3 @@
-package com.imobiliaria.teste;
-
 import com.imobiliaria.model.Cliente;
 import com.imobiliaria.model.Imovel;
 import com.imobiliaria.model.Locacao;
