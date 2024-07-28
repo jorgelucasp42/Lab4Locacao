@@ -9,6 +9,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
 
+// OBSERVAÇÃO: Execute antes a classe TesteServicosImovel
+
 public class TesteProfissional {
     private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
     private static EntityManager manager = factory.createEntityManager();
