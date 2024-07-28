@@ -2,9 +2,11 @@ package com.imobiliaria.teste;
 
 import com.imobiliaria.model.Cliente;
 import com.imobiliaria.model.Imovel;
+import com.imobiliaria.model.Locacao;
 import com.imobiliaria.model.TipoImovel;
 import com.imobiliaria.repository.ClienteRepository;
 import com.imobiliaria.repository.ImovelRepository;
+import com.imobiliaria.repository.LocacaoRepository;
 import com.imobiliaria.repository.TipoImovelRepository;
 
 import javax.persistence.EntityManager;
@@ -23,6 +25,7 @@ public class PopulaBanco {
     private static ClienteRepository clienteRepository = new ClienteRepository(manager);
     private static TipoImovelRepository tipoImovelRepository = new TipoImovelRepository(manager);
     private static ImovelRepository imovelRepository = new ImovelRepository(manager);
+    private static LocacaoRepository locacaoRepository = new LocacaoRepository(manager);
 
     public static void main(String[] args) {
         try {
@@ -30,6 +33,7 @@ public class PopulaBanco {
             popularClientes();
             popularTiposImovel();
             popularImoveis();
+            popularLocacoes();
         } finally {
             manager.close();
             factory.close();
@@ -133,6 +137,49 @@ public class PopulaBanco {
         }
     }
 
+    private static void popularLocacoes() {
+        EntityTransaction transacao = manager.getTransaction();
+        try {
+            transacao.begin();
+
+            Cliente cliente1 = clienteRepository.buscaPorId(Cliente.class, 1);
+            Cliente cliente2 = clienteRepository.buscaPorId(Cliente.class, 2);
+            Cliente cliente3 = clienteRepository.buscaPorId(Cliente.class, 3);
+            Cliente cliente4 = clienteRepository.buscaPorId(Cliente.class, 4);
+            Cliente cliente5 = clienteRepository.buscaPorId(Cliente.class, 5);
+
+            Imovel imovel1 = imovelRepository.buscaPorId(Imovel.class, 1);
+            Imovel imovel2 = imovelRepository.buscaPorId(Imovel.class, 2);
+            Imovel imovel3 = imovelRepository.buscaPorId(Imovel.class, 3);
+            Imovel imovel4 = imovelRepository.buscaPorId(Imovel.class, 4);
+            Imovel imovel5 = imovelRepository.buscaPorId(Imovel.class, 5);
+
+            Locacao locacao1 = new Locacao(null, imovel1, cliente1, 1200.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 1", new ArrayList<>());
+            Locacao locacao2 = new Locacao(null, imovel2, cliente2, 1300.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 2", new ArrayList<>());
+            Locacao locacao3 = new Locacao(null, imovel3, cliente3, 1400.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 3", new ArrayList<>());
+            Locacao locacao4 = new Locacao(null, imovel4, cliente4, 1500.00, 2.0, (byte) 5, new Date(), null, false, "Observação de teste 4", new ArrayList<>());
+            Locacao locacao5 = new Locacao(null, imovel5, cliente5, 1600.00, 2.0, (byte) 5, new Date(), new Date(), false, "Observação de teste 5", new ArrayList<>()); // Locação inativa
+
+            locacao1 = locacaoRepository.salvaOuAtualiza(locacao1);
+            locacao2 = locacaoRepository.salvaOuAtualiza(locacao2);
+            locacao3 = locacaoRepository.salvaOuAtualiza(locacao3);
+            locacao4 = locacaoRepository.salvaOuAtualiza(locacao4);
+            locacao5 = locacaoRepository.salvaOuAtualiza(locacao5);
+
+            transacao.commit();
+
+            System.out.println("Locações criadas com sucesso.");
+            imprimirLocacao(locacao1);
+            imprimirLocacao(locacao2);
+            imprimirLocacao(locacao3);
+            imprimirLocacao(locacao4);
+            imprimirLocacao(locacao5);
+        } catch (Exception e) {
+            transacao.rollback();
+            e.printStackTrace();
+        }
+    }
+
     private static void imprimirCliente(Cliente cliente) {
         System.out.println("ID: " + cliente.getId());
         System.out.println("Nome: " + cliente.getNome());
@@ -163,6 +210,21 @@ public class PopulaBanco {
         System.out.println("Vagas de Garagem: " + imovel.getVagasGaragem());
         System.out.println("Valor do Aluguel Sugerido: " + imovel.getValorAluguelSugerido());
         System.out.println("Observações: " + imovel.getObs());
+        System.out.println("=====================================");
+    }
+
+    private static void imprimirLocacao(Locacao locacao) {
+        System.out.println("ID: " + locacao.getId());
+        System.out.println("Imóvel: " + locacao.getImovel().getLogradouro());
+        System.out.println("Inquilino: " + locacao.getInquilino().getNome());
+        System.out.println("Valor Aluguel: " + locacao.getValorAluguel());
+        System.out.println("Percentual Multa: " + locacao.getPercentualMulta());
+        System.out.println("Dia Vencimento: " + locacao.getDiaVencimento());
+        System.out.println("Data Início: " + locacao.getDataInicio());
+        System.out.println("Data Fim: " + locacao.getDataFim());
+        System.out.println("Ativo: " + locacao.getAtivo());
+        System.out.println("Observações: " + locacao.getObs());
+        System.out.println("Quantidade de Aluguéis: " + (locacao.getAlugueis() != null ? locacao.getAlugueis().size() : 0));
         System.out.println("=====================================");
     }
 
