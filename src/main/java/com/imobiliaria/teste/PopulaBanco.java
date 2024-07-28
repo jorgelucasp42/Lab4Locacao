@@ -157,7 +157,7 @@ public class PopulaBanco {
             Locacao locacao1 = new Locacao(null, imovel1, cliente1, 1200.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 1", new ArrayList<>());
             Locacao locacao2 = new Locacao(null, imovel2, cliente2, 1300.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 2", new ArrayList<>());
             Locacao locacao3 = new Locacao(null, imovel3, cliente3, 1400.00, 2.0, (byte) 5, new Date(), null, true, "Observação de teste 3", new ArrayList<>());
-            Locacao locacao4 = new Locacao(null, imovel4, cliente4, 1500.00, 2.0, (byte) 5, new Date(), null, false, "Observação de teste 4", new ArrayList<>());
+            Locacao locacao4 = new Locacao(null, imovel4, cliente4, 1500.00, 2.0, (byte) 5, new Date(), new Date(), false, "Observação de teste 4", new ArrayList<>());
             Locacao locacao5 = new Locacao(null, imovel5, cliente5, 1600.00, 2.0, (byte) 5, new Date(), new Date(), false, "Observação de teste 5", new ArrayList<>()); // Locação inativa
 
             locacao1 = locacaoRepository.salvaOuAtualiza(locacao1);
